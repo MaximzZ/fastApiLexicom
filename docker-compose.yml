@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]  # Команда для запуска приложения
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+  tests:
+    build: .
+    depends_on:
+      - redis
+    command: ["pytest", "--disable-warnings"]  # Команда для запуска тестов
+    environment:
+      - REDIS_HOST=redis
